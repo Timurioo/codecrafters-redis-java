@@ -26,7 +26,7 @@ public class Main {
       while ((inputLine = in.readLine()) != null) {
         if ("PING".equals(inputLine)) {
           System.out.println("Handling PING request...");
-          out.println("+PONG");
+          out.println("+PONG\r\n");
           System.out.println("PONG");
         }
       }
