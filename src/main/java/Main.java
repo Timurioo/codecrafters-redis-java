@@ -25,7 +25,7 @@ public class Main {
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
         if ("PING".equalsIgnoreCase(inputLine)) {
-          System.out.println("Handling PING request...");
+          System.out.println("Handling PING...");
           out.println("+PONG\r\n");
           System.out.println("PONG");
         }
