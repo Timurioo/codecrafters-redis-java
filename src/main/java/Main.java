@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -20,13 +19,14 @@ public class Main {
       // Wait for connection from client.
       clientSocket = serverSocket.accept();
       System.out.println("Client accepted...");
+      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
       BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
         if ("PING".equals(inputLine)) {
           System.out.println("Handling PING request...");
-          out.write("+PONG");
+          out.println("+PONG");
           System.out.println("PONG");
         }
       }
