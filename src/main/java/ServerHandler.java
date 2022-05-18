@@ -3,15 +3,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 
 public class ServerHandler extends Thread {
 
   private final Socket clientSocket;
   private PrintWriter out;
   private BufferedReader in;
+  private final RespParser parser;
 
   public ServerHandler(Socket clientSocket) {
     this.clientSocket = clientSocket;
+    this.parser = new RespParser();
   }
 
   @Override
@@ -23,10 +26,25 @@ public class ServerHandler extends Thread {
 
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
-        if ("PING".equalsIgnoreCase(inputLine)) {
-          System.out.println("Handling PING...");
-          out.println("+PONG\r");
-          System.out.println("PONG");
+        List<String> commands = parser.parseInput(inputLine);
+        for (int i = 0; i < commands.size(); i++) {
+          switch (commands.get(i)) {
+            case "ECHO": {
+              logCommand(commands.get(i));
+              String output = parser.convertOutput(commands.get(i + 1));
+              out.println(output);
+              System.out.println(output);
+              break;
+            }
+            case "PING": {
+              logCommand(commands.get(i));
+              String pong = parser.convertOutput("PONG");
+              out.println(pong);
+              System.out.println(pong);
+              break;
+            }
+            default: {}
+          }
         }
       }
     } catch (IOException e) {
@@ -40,5 +58,9 @@ public class ServerHandler extends Thread {
         e.printStackTrace();
       }
     }
+  }
+
+  private void logCommand(String respCommand) {
+    System.out.printf("Handling %s...%n", respCommand);
   }
 }

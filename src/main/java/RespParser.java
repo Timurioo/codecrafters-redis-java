@@ -1,0 +1,66 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class RespParser {
+
+  public List<String> parseInput(String input) {
+    System.out.println("Parsing input: " + input);
+    List<String> commandsStr = null;
+    for (int i = 0; i < input.length(); i++) {
+      char character = input.charAt(i);
+      if (character != '\\') {
+        if (character == '*') {
+          StringBuilder commandsSize = new StringBuilder();
+          int j = i+1;
+          while (input.charAt(j) != '\\') {
+            commandsSize.append(input.charAt(j));
+            j++;
+          }
+          j += 2;
+          commandsStr = new ArrayList<>(Integer.parseInt(commandsSize.toString()));
+          i = incrementIdx(i, j);
+        } else if (character == '$') {
+          StringBuilder bulkStringSize = new StringBuilder();
+          int j = i+1;
+          while (input.charAt(j) != '\\') {
+            bulkStringSize.append(input.charAt(j));
+            j++;
+          }
+          j += 4;
+          String message = input.substring(j, j + Integer.parseInt(bulkStringSize.toString()));
+          i = incrementIdx(i, j);
+          commandsStr.add(message);
+        }
+      }
+    }
+    System.out.println("Input parsed: " + commandsStr);
+    return commandsStr;
+  }
+
+  private int incrementIdx(int i, int j) {
+    i += (j - i);
+    return i;
+  }
+
+  public String convertOutput(String output) {
+    StringBuilder str = new StringBuilder();
+    try {
+      int number = Integer.parseInt(output);
+      return str.append(":").append(number).append("\r").toString();
+    } catch (NumberFormatException ex) {
+      return str.append("+").append(output).append("\r").toString();
+    }
+  }
+
+  private boolean isaBulkString(String messages) {
+    return messages.charAt(0) == '$';
+  }
+
+  private String parseMessage(String[] messages, int idx) {
+    if (isaBulkString(messages[idx])) {
+      return messages[idx + 1];
+    } else {
+      return messages[idx];
+    }
+  }
+}
