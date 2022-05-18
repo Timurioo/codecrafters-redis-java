@@ -4,7 +4,7 @@ import java.util.List;
 public class RespParser {
 
   public List<String> parseInput(String input) {
-    System.out.println("Parsing input: " + input);
+    System.out.println("Parsing input: " + input.replace("\r\n", "\\r\\n"));
     List<String> commandsStr = null;
     for (int i = 0; i < input.length(); i++) {
       char character = input.charAt(i);
