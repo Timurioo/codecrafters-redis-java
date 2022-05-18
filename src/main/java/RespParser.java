@@ -8,28 +8,31 @@ public class RespParser {
     List<String> commandsStr = null;
     for (int i = 0; i < input.length(); i++) {
       char character = input.charAt(i);
-      if (character != '\\') {
+      if (character != '\r') {
         if (character == '*') {
           StringBuilder commandsSize = new StringBuilder();
           int j = i+1;
-          while (input.charAt(j) != '\\') {
+          while (input.charAt(j) != '\r') {
             commandsSize.append(input.charAt(j));
             j++;
           }
-          j += 2;
+          j += 1;
           commandsStr = new ArrayList<>(Integer.parseInt(commandsSize.toString()));
           i = incrementIdx(i, j);
         } else if (character == '$') {
           StringBuilder bulkStringSize = new StringBuilder();
           int j = i+1;
-          while (input.charAt(j) != '\\') {
+          while (input.charAt(j) != '\r') {
             bulkStringSize.append(input.charAt(j));
             j++;
           }
-          j += 4;
+          j += 2;
           String message = input.substring(j, j + Integer.parseInt(bulkStringSize.toString()));
           i = incrementIdx(i, j);
           commandsStr.add(message);
+        } else if (character == ':') {
+          commandsStr.add(String.valueOf(input.charAt(i+1)));
+          i++;
         }
       }
     }
