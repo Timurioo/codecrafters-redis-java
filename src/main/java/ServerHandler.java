@@ -24,27 +24,30 @@ public class ServerHandler extends Thread {
       in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
       String inputLine;
-      while ((inputLine = in.readLine()) != null) {
-        System.out.println("Parsing input: " + inputLine.replace("\r", "\\r").replace("\n", "\\n"));
-      }
-      List<String> commands = parser.parseInput(inputLine);
-      for (int i = 0; i < commands.size(); i++) {
-        switch (commands.get(i)) {
-          case "ECHO": {
-            logCommand(commands.get(i));
-            String output = parser.convertOutput(commands.get(i + 1));
-            out.println(output);
-            System.out.println(output);
-            break;
-          }
-          case "PING": {
-            logCommand(commands.get(i));
-            String pong = parser.convertOutput("PONG");
-            out.println(pong);
-            System.out.println(pong);
-            break;
-          }
-          default: {
+      StringBuilder commandsStr = new StringBuilder();
+      while (true) {
+        while ((inputLine = in.readLine()) != null) {
+          commandsStr.append(inputLine).append("\r\n");
+        }
+        List<String> commands = parser.parseInput(commandsStr.toString());
+        for (int i = 0; i < commands.size(); i++) {
+          switch (commands.get(i)) {
+            case "ECHO": {
+              logCommand(commands.get(i));
+              String output = parser.convertOutput(commands.get(i + 1));
+              out.println(output);
+              System.out.println(output);
+              break;
+            }
+            case "PING": {
+              logCommand(commands.get(i));
+              String pong = parser.convertOutput("PONG");
+              out.println(pong);
+              System.out.println(pong);
+              break;
+            }
+            default: {
+            }
           }
         }
       }
