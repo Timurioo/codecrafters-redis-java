@@ -1,5 +1,3 @@
-package redis.codecrafters;
-
 import java.util.ArrayList;
 import java.util.List;
 
