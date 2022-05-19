@@ -25,7 +25,7 @@ public class ServerHandler extends Thread {
 
       String inputLine;
       StringBuilder commandsStr = new StringBuilder();
-      while (true) {
+      while (in.ready()) {
         while ((inputLine = in.readLine()) != null) {
           System.out.println("inputLine: " + inputLine);
           commandsStr.append(inputLine).append("\r\n");
