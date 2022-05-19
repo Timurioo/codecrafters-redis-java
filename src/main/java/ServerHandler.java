@@ -32,22 +32,21 @@ public class ServerHandler extends Thread {
         List<String> commands = parser.parseInput(commandsStr.toString());
         for (int i = 0; i < commands.size(); i++) {
           switch (commands.get(i)) {
-            case "ECHO": {
+            case "echo": {
               logCommand(commands.get(i));
               String output = parser.convertOutput(commands.get(i + 1));
               out.println(output);
               System.out.println(output);
               break;
             }
-            case "PING": {
+            case "ping": {
               logCommand(commands.get(i));
               String pong = parser.convertOutput("PONG");
               out.println(pong);
               System.out.println(pong);
               break;
             }
-            default: {
-            }
+            default: {}
           }
         }
       }
