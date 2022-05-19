@@ -27,9 +27,7 @@ public class ServerHandler extends Thread {
       StringBuilder commandsStr = new StringBuilder();
       while (in.ready()) {
         while ((inputLine = in.readLine()) != null) {
-          System.out.println("inputLine: " + inputLine);
           commandsStr.append(inputLine).append("\r\n");
-          System.out.println("commandsStr: " + commandsStr.toString().replace("\r", "\\r").replace("\n", "\\n"));
         }
         List<String> commands = parser.parseInput(commandsStr.toString());
         for (int i = 0; i < commands.size(); i++) {
