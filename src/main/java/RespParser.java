@@ -8,11 +8,11 @@ public class RespParser {
     List<String> commandsStr = null;
     for (int i = 0; i < input.length(); i++) {
       char character = input.charAt(i);
-      if (!String.valueOf(character).equals(System.lineSeparator())) {
+      if (character != '\r' && character != '\n') {
         if (character == '*') {
           StringBuilder commandsSize = new StringBuilder();
           int j = i + 1;
-          while (!String.valueOf(input.charAt(j)).equals(System.lineSeparator())) {
+          while (input.charAt(j) != '\r') {
             commandsSize.append(input.charAt(j));
             j++;
           }
@@ -23,13 +23,15 @@ public class RespParser {
         } else if (character == '$') {
           StringBuilder bulkStringSize = new StringBuilder();
           int j = i + 1;
-          while (String.valueOf(input.charAt(j)).equals(System.lineSeparator())) {
+          while (input.charAt(j) != '\r') {
             bulkStringSize.append(input.charAt(j));
             j++;
           }
           j += 2;
-          String message = input.substring(j, j + Integer.parseInt(bulkStringSize.toString()));
+          int bulkStrSize = Integer.parseInt(bulkStringSize.toString());
+          String message = input.substring(j, j + bulkStrSize);
           i = incrementIdx(i, j);
+          i += bulkStrSize;
           commandsStr.add(message);
         } else if (character == ':') {
           commandsStr.add(String.valueOf(input.charAt(i + 1)));
