@@ -25,28 +25,31 @@ public class ServerHandler extends Thread {
 
       String inputLine;
       StringBuilder commandsStr = new StringBuilder();
-      while (in.ready()) {
-        while ((inputLine = in.readLine()) != null) {
-          commandsStr.append(inputLine).append("\r\n");
-        }
-        List<String> commands = parser.parseInput(commandsStr.toString());
-        for (int i = 0; i < commands.size(); i++) {
-          switch (commands.get(i)) {
-            case "echo": {
-              logCommand(commands.get(i));
-              String output = parser.convertOutput(commands.get(i + 1));
-              out.print(output);
-              System.out.println(output);
-              break;
+      while (true) {
+        if (in.ready()) {
+          while ((inputLine = in.readLine()) != null) {
+            commandsStr.append(inputLine).append("\r\n");
+          }
+          List<String> commands = parser.parseInput(commandsStr.toString());
+          for (int i = 0; i < commands.size(); i++) {
+            switch (commands.get(i)) {
+              case "echo": {
+                logCommand(commands.get(i));
+                String output = parser.convertOutput(commands.get(i + 1));
+                out.print(output);
+                System.out.println(output);
+                break;
+              }
+              case "ping": {
+                logCommand(commands.get(i));
+                String pong = parser.convertOutput("PONG");
+                out.print(pong);
+                System.out.println(pong);
+                break;
+              }
+              default: {
+              }
             }
-            case "ping": {
-              logCommand(commands.get(i));
-              String pong = parser.convertOutput("PONG");
-              out.print(pong);
-              System.out.println(pong);
-              break;
-            }
-            default: {}
           }
         }
       }
