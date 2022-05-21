@@ -73,9 +73,9 @@ public class RespParser {
     StringBuilder str = new StringBuilder();
     try {
       int number = Integer.parseInt(output);
-      return str.append(":").append(number).append("\r\n").toString();
+      return str.append(":").append(number).append("\r").toString();
     } catch (NumberFormatException ex) {
-      return str.append("+").append(output).append("\r\n").toString();
+      return str.append("+").append(output).append("\r").toString();
     }
   }
 

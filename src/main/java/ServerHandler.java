@@ -80,14 +80,14 @@ public class ServerHandler extends Thread {
         case "echo": {
           logCommand(commands.get(i));
           String output = parser.convertOutput(commands.get(i + 1));
-          out.print(output);
+          out.println(output);
           System.out.println(output);
           break;
         }
         case "ping": {
           logCommand(commands.get(i));
           String pong = parser.convertOutput("PONG");
-          out.print(pong);
+          out.println(pong);
           System.out.println(pong);
           break;
         }
