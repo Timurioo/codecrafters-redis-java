@@ -51,7 +51,7 @@ public class RespParser {
         if (character == '*') {
           StringBuilder commandsSize = new StringBuilder();
           int j = i + 1;
-          while (input.charAt(j) != '\r') {
+          while (input.charAt(j) != '\r' && input.charAt(j) != '\n') {
             commandsSize.append(input.charAt(j));
             j++;
           }
@@ -89,5 +89,10 @@ public class RespParser {
     } else {
       return messages[idx];
     }
+  }
+
+  public boolean parseCountableElement(String inputLine) {
+    char markingChar = inputLine.charAt(0);
+    return markingChar != '$';
   }
 }
