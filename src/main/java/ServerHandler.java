@@ -23,22 +23,50 @@ public class ServerHandler extends Thread {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
     ) {
 
-      String inputLine;
+      StringBuilder inputLine = new StringBuilder();
       StringBuilder commandsStr = new StringBuilder();
-      while ((inputLine = in.readLine()) != null) {
-        if (!inputLine.equals("")) {
+      int arraySize = -1;
+      int elementCount = 0;
+      int input;
+      while (true) {
+        input = in.read();
+        if (input == -1) {
+          continue;
+        }
+        char character = (char) input;
+        if (character != '\r' && character != '\n') {
+          inputLine.append(character);
+        } else if (character == '\n') {
           System.out.println("inputLine = " + inputLine);
-          commandsStr.append(inputLine).append("\r\n");
-          System.out.println("commandsStr = " + commandsStr.toString().replace("\r", "\\r").replace("\n", "\\n"));
-        } else {
-          List<String> commands = parser.parseInput(commandsStr.toString());
-          serveCommands(commands, out);
+          inputLine.append("\r\n");
+          if (arraySize == -1) {
+            arraySize = parser.parseArraySize(inputLine.toString());
+          } else {
+            boolean shouldBeCounted = parser.parseCountableElement(inputLine.toString());
+            if (shouldBeCounted) {
+              elementCount++;
+            }
+          }
+          commandsStr.append(inputLine);
+          inputLine = new StringBuilder();
+          System.out.println("commandsStr = " + commandsStr);
+          if (commandsStr.toString().isEmpty()) {
+            continue;
+          }
+          if (elementCount == arraySize) {
+            arraySize = -1;
+            elementCount = 0;
+            List<String> commands = parser.parseInput(commandsStr.toString());
+            serveCommands(commands, out);
+            commandsStr = new StringBuilder();
+          }
         }
       }
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
       try {
+        System.out.println("Closing client connection...");
         clientSocket.close();
       } catch (IOException e) {
         e.printStackTrace();
