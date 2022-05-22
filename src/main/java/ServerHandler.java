@@ -4,15 +4,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 public class ServerHandler extends Thread {
 
   private final Socket clientSocket;
+  private final Map<String, String> cache;
   private final RespParser parser = new RespParser();
 
-  public ServerHandler(Socket clientSocket) {
+  public ServerHandler(Socket clientSocket, Map<String, String> cache) {
     this.clientSocket = clientSocket;
+    this.cache = cache;
   }
 
   @Override
@@ -89,6 +91,23 @@ public class ServerHandler extends Thread {
           String pong = parser.convertOutput("PONG");
           out.println(pong);
           System.out.println(pong);
+          break;
+        }
+        case "get": {
+          logCommand(commands.get(i));
+          String key = commands.get(i+1);
+          String value = parser.convertBulkString(cache.get(key));
+          out.println(value);
+          System.out.println(value);
+          break;
+        }
+        case "set": {
+          logCommand(commands.get(i));
+          String key = commands.get(i+1);
+          String value = commands.get(i+2);
+          cache.put(key, value);
+          out.println(parser.convertOutput("OK"));
+          System.out.println(cache.get(key));
           break;
         }
         default: {

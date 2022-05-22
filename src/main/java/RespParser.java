@@ -95,4 +95,8 @@ public class RespParser {
     char markingChar = inputLine.charAt(0);
     return markingChar != '$';
   }
+
+  public String convertBulkString(String s) {
+    return new StringBuilder().append("$").append(s.length()).append("\r\n").append(s).append("\r").toString();
+  }
 }
