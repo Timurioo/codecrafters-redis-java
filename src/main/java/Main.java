@@ -11,8 +11,7 @@ public class Main {
 
     //  Uncomment this block to pass the first stage
     int port = 6379;
-    Map<String, String> cache = new ConcurrentHashMap<>();
-    cache.put("test", "123");
+    CacheWithExpiration<String, String> cache = new CacheWithExpiration<>();
     try (ServerSocket serverSocket = new ServerSocket(port)) {
       while (true) {
         new ServerHandler(serverSocket.accept(), cache).start();

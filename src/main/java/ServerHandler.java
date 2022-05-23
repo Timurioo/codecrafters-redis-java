@@ -9,10 +9,10 @@ import java.util.Map;
 public class ServerHandler extends Thread {
 
   private final Socket clientSocket;
-  private final Map<String, String> cache;
+  private final CacheWithExpiration<String, String> cache;
   private final RespParser parser = new RespParser();
 
-  public ServerHandler(Socket clientSocket, Map<String, String> cache) {
+  public ServerHandler(Socket clientSocket, CacheWithExpiration<String, String> cache) {
     this.clientSocket = clientSocket;
     this.cache = cache;
   }
@@ -105,7 +105,17 @@ public class ServerHandler extends Thread {
           logCommand(commands.get(i));
           String key = commands.get(i+1);
           String value = commands.get(i+2);
-          cache.put(key, value);
+          String expirationFlag = null;
+          if (i + 3 > commands.size()) {
+            expirationFlag = commands.get(i + 3);
+          }
+          String millisec = null;
+          if ("px".equalsIgnoreCase(expirationFlag)) {
+            millisec = commands.get(i + 4);
+            cache.put(key, value, Long.parseLong(millisec));
+          } else {
+            cache.put(key, value);
+          }
           out.println(parser.convertOutput("OK"));
           System.out.println(cache.get(key));
           break;
