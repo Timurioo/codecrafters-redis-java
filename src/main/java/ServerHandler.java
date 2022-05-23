@@ -103,7 +103,7 @@ public class ServerHandler extends Thread {
           String key = commands.get(i+1);
           String value = commands.get(i+2);
           String expirationFlag = null;
-          if (i + 3 > commands.size()) {
+          if (i + 3 < commands.size()) {
             expirationFlag = commands.get(i + 3);
           }
           String millisec;
