@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
-import java.util.Map;
 
 public class ServerHandler extends Thread {
 
@@ -39,7 +38,6 @@ public class ServerHandler extends Thread {
         if (character != '\r' && character != '\n') {
           inputLine.append(character);
         } else if (character == '\n') {
-          System.out.println("inputLine = " + inputLine);
           inputLine.append("\r\n");
           if (arraySize == -1) {
             arraySize = parser.parseArraySize(inputLine.toString());
@@ -51,7 +49,6 @@ public class ServerHandler extends Thread {
           }
           commandsStr.append(inputLine);
           inputLine = new StringBuilder();
-          System.out.println("commandsStr = " + commandsStr);
           if (commandsStr.toString().isEmpty()) {
             continue;
           }
