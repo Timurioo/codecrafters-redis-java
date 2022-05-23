@@ -106,15 +106,16 @@ public class ServerHandler extends Thread {
           if (i + 3 > commands.size()) {
             expirationFlag = commands.get(i + 3);
           }
-          String millisec = null;
-          if ("px".equalsIgnoreCase(expirationFlag)) {
+          String millisec;
+          if ("px".equals(expirationFlag)) {
             millisec = commands.get(i + 4);
+            System.out.println("Setting " + key + "->" + value + " expiring after " + millisec + " ms");
             cache.put(key, value, Long.parseLong(millisec));
           } else {
+            System.out.println("Setting " + key + "->" + value);
             cache.put(key, value);
           }
           out.println(parser.convertOutput("OK"));
-          System.out.println(cache.get(key));
           break;
         }
         default: {

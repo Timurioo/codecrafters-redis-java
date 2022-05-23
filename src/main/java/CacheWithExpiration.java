@@ -27,8 +27,7 @@ public class CacheWithExpiration<K, V> {
   private Entry<V> entryFor(K key) {
     Entry<V> entry = this.map.get(key);
     if (entry != null) {
-      long deltaTime = System.currentTimeMillis() - entry.timestamp();
-      if (deltaTime < 0L || deltaTime > entry.expirationTime()) {
+      if (System.currentTimeMillis() > entry.timestamp() + entry.expirationTime()) {
         System.out.println("Removing value " + entry.val + " expired after " + entry.expirationTime() + " ms");
         this.map.remove(key);
         entry = null;
