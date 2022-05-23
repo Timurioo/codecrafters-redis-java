@@ -60,6 +60,7 @@ public class CacheWithExpiration<K, V> {
     if (entry != null) {
       entry.setTimestamp(System.currentTimeMillis());
       entry.setVal(val);
+      entry.setMillisecBeforeExpiration(DEFAULT_EXPIRATION_TIME);
     } else {
       this.map.put(key, new Entry<>(val, DEFAULT_EXPIRATION_TIME));
     }
