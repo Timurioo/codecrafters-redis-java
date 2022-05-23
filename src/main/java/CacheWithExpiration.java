@@ -6,8 +6,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CacheWithExpiration<K, V> {
-  private final ConcurrentMap<K, CacheWithExpiration.Entry<V>> map;
+
   private static final long DEFAULT_EXPIRATION_TIME = 30000L;
+  private final ConcurrentMap<K, CacheWithExpiration.Entry<V>> map;
   private volatile AtomicInteger queryCount = new AtomicInteger(0);
   private volatile int QUERY_OVERFLOW = 300;
 
@@ -20,7 +21,7 @@ public class CacheWithExpiration<K, V> {
       cleanup();
     }
     Entry<V> entry = entryFor(key);
-    return entry.val();
+    return entry == null ? null : entry.val();
   }
 
   private Entry<V> entryFor(K key) {
@@ -28,6 +29,7 @@ public class CacheWithExpiration<K, V> {
     if (entry != null) {
       long deltaTime = System.currentTimeMillis() - entry.timestamp();
       if (deltaTime < 0L || deltaTime >= entry.expirationTime()) {
+        System.out.println("Removing expired value " + entry.val);
         this.map.remove(key);
         entry = null;
       }
@@ -64,7 +66,17 @@ public class CacheWithExpiration<K, V> {
   }
 
   public synchronized void put(K key, V val, long expirationTime) {
-    this.map.put(key, new Entry<>(val, expirationTime));
+    if (queryCount.incrementAndGet() >= QUERY_OVERFLOW) {
+      cleanup();
+    }
+    Entry<V> entry = entryFor(key);
+    if (entry != null) {
+      entry.setTimestamp(System.currentTimeMillis());
+      entry.setVal(val);
+      entry.setMillisecBeforeExpiration(expirationTime);
+    } else {
+      this.map.put(key, new Entry<>(val, expirationTime));
+    }
   }
 
   synchronized void clear() {
@@ -72,6 +84,7 @@ public class CacheWithExpiration<K, V> {
   }
 
   static class Entry<V> {
+
     private V val;
     private long timestamp;
     private long millisecBeforeExpiration;

@@ -97,7 +97,7 @@ public class RespParser {
   }
 
   public String convertBulkString(String s) {
-    if (s == null) return "-" + "nil" + "\r";
+    if (s == null) return "$-1\r";
     return "$" + s.length() + "\r\n" + s + "\r";
   }
 }
