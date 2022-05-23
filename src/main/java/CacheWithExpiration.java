@@ -28,8 +28,8 @@ public class CacheWithExpiration<K, V> {
     Entry<V> entry = this.map.get(key);
     if (entry != null) {
       long deltaTime = System.currentTimeMillis() - entry.timestamp();
-      if (deltaTime < 0L || deltaTime >= entry.expirationTime()) {
-        System.out.println("Removing expired value " + entry.val);
+      if (deltaTime < 0L || deltaTime > entry.expirationTime()) {
+        System.out.println("Removing value " + entry.val + " expired after " + entry.expirationTime() + " ms");
         this.map.remove(key);
         entry = null;
       }
